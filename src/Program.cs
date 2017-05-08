@@ -45,14 +45,13 @@ namespace DEA
         {
             try
             {
+                JsonSerializer serializer = new JsonSerializer();
                 using (StreamReader file = File.OpenText(@"Credentials.json"))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
                 }
                 using (StreamReader file = File.OpenText(@"ItemList.json"))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
                 }
             }
