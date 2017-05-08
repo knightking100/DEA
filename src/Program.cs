@@ -135,6 +135,7 @@ namespace DEA
                 .AddSingleton(_mutes)
                 .AddSingleton(_blacklists)
                 .AddSingleton(_polls)
+                .AddSingleton(_items)
                 .AddSingleton<PollRepository>()
                 .AddSingleton<GuildRepository>()
                 .AddSingleton<BlacklistRepository>()
