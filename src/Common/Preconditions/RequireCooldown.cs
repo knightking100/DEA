@@ -16,7 +16,7 @@ namespace DEA.Common.Preconditions
         /// </summary>
         public RequireCooldownAttribute() { }
 
-        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider serviceProvider)
         {
             TimeSpan cooldown;
             DateTime lastUse;

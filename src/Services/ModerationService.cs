@@ -1,6 +1,5 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
-using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
@@ -9,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
+    /// <summary>
+    /// All moderation utilies.
+    /// </summary>
     public class ModerationService
     {
         private readonly GuildRepository _guildRepo;

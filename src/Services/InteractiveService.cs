@@ -2,12 +2,14 @@
 using Discord;
 using Discord.WebSocket;
 using System;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DEA.Services
 {
+    /// <summary>
+    /// All interactive services.
+    /// </summary>
     public class InteractiveService
     {
         private readonly DiscordSocketClient _client;

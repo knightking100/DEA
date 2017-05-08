@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DEA.Common;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
-using System.Runtime.InteropServices;
 using DEA.Common.Data;
 
 namespace System.Modules
@@ -14,10 +13,12 @@ namespace System.Modules
     public class System : DEAModule
     {
         private readonly CommandService _commandService;
+        private readonly Statistics _statistics;
 
-        public System(CommandService commandService)
+        public System(CommandService commandService, Statistics statistics)
         {
             _commandService = commandService;
+            _statistics = statistics;
         }
 
         [Command("Invite")]
@@ -94,6 +95,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             if (commandOrModule != null)
             {
+                commandOrModule = commandOrModule.ToLower();
                 if (commandOrModule.StartsWith(Context.Prefix))
                 {
                     commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
@@ -101,7 +103,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
                 foreach (var module in _commandService.Modules)
                 {
-                    if (module.Name.ToLower() == commandOrModule.ToLower())
+                    if (module.Name.ToLower() == commandOrModule)
                     {
                         var longestInModule = 0;
                         foreach (var cmd in module.Commands)
@@ -125,21 +127,16 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
                 foreach (var module in _commandService.Modules)
                 {
-                    foreach (var cmd in module.Commands)
+                    var cmd = module.Commands.FirstOrDefault(x => x.Aliases.Any(y => y.ToLower() == commandOrModule));
+                    if (cmd != default(CommandInfo))
                     {
-                        foreach (var alias in cmd.Aliases)
-                        {
-                            if (alias.ToLower() == commandOrModule.ToLower())
-                            {
-                                var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
-                                var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`";
-                                
-                                await SendAsync($"**Description:** {cmd.Summary}\n\n" +
-                                                $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" + example, 
-                                                commandOrModule.UpperFirstChar());
-                                return;
-                            }
-                        }
+                        var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
+                        var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`";
+
+                        await SendAsync($"**Description:** {cmd.Summary}\n\n" +
+                                        $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" + example,
+                                        commandOrModule.UpperFirstChar());
+                        return;
                     }
                 }
 
@@ -166,7 +163,7 @@ This command may be used for view the commands for each of the following modules
 
 In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182> 
 
-If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/Tuptja9>, a server home to infamous meme events such as insanity.",
+If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/gvyma7H>, a server home to infamous meme events such as insanity.",
                     "Welcome to DEA");
 
                 await ReplyAsync($"You have been DMed with all the command information!");
@@ -183,14 +180,14 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("Framework", $"{RuntimeInformation.FrameworkDescription}")
+                .AddInlineField("Framework", $".NET Core 1.0.3")
                 .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
                 .AddInlineField("Users", $"{Context.Client.Guilds.Sum(g => g.MemberCount)}")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
-                .AddInlineField("Messages", $"{Config.MESSAGES} ({(Config.MESSAGES / uptime.TotalSeconds).ToString("N2")}/sec)")
-                .AddInlineField("Commands Run", Config.COMMANDS_RUN)
+                .AddInlineField("Messages", $"{_statistics.MessagesRecieved} ({(_statistics.MessagesRecieved / uptime.TotalSeconds).ToString("N2")}/sec)")
+                .AddInlineField("Commands Run", _statistics.CommandsRun)
                 .WithColor(Config.Color());
             }
             

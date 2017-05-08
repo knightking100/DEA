@@ -33,7 +33,7 @@ namespace DEA.Modules
         {
             await _userRepo.ModifyAsync(Context.DbUser, x => x.Whore = DateTime.UtcNow);
 
-            int roll = new Random().Next(1, 101);
+            int roll = Config.RAND.Next(1, 101);
             if (roll > Config.WHORE_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.WHORE_FINE);
@@ -43,7 +43,7 @@ namespace DEA.Modules
             }
             else
             {
-                decimal moneyWhored = (new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
+                decimal moneyWhored = (Config.RAND.Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyWhored);
 
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {Context.Cash.USD()}.");
@@ -57,7 +57,7 @@ namespace DEA.Modules
         {
             await _userRepo.ModifyAsync(Context.DbUser, x => x.Jump = DateTime.UtcNow);
 
-            int roll = new Random().Next(1, 101);
+            int roll = Config.RAND.Next(1, 101);
             if (roll > Config.JUMP_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.JUMP_FINE);
@@ -67,7 +67,7 @@ namespace DEA.Modules
             }
             else
             {
-                decimal moneyJumped = (new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
+                decimal moneyJumped = (Config.RAND.Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyJumped);
 
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {Context.Cash.USD()}.");
@@ -81,7 +81,7 @@ namespace DEA.Modules
         {
             await _userRepo.ModifyAsync(Context.DbUser, x => x.Steal = DateTime.UtcNow);
 
-            int roll = new Random().Next(1, 101);
+            int roll = Config.RAND.Next(1, 101);
             if (roll > Config.STEAL_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.STEAL_FINE);
@@ -92,10 +92,10 @@ namespace DEA.Modules
             }
             else
             {
-                decimal moneyStolen = (new Random().Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100m;
+                decimal moneyStolen = (Config.RAND.Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyStolen);
 
-                string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
+                string randomStore = Config.STORES[Config.RAND.Next(1, Config.STORES.Length) - 1];
                 await ReplyAsync($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                             $"with {moneyStolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
@@ -151,7 +151,7 @@ namespace DEA.Modules
 
             var stolen = resources * 2;
 
-            int roll = new Random().Next(1, 101);
+            int roll = Config.RAND.Next(1, 101);
 
             var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
 

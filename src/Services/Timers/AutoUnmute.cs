@@ -2,7 +2,7 @@
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
 using MongoDB.Driver;
 using System;
@@ -17,19 +17,19 @@ namespace DEA.Services.Timers
     /// </summary>
     class AutoUnmute
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly GuildRepository _guildRepo;
         private readonly MuteRepository _muteRepo;
 
         private readonly Timer _timer;
 
-        public AutoUnmute(IDependencyMap map)
+        public AutoUnmute(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _client = _map.Get<DiscordSocketClient>();
-            _guildRepo = _map.Get<GuildRepository>();
-            _muteRepo = _map.Get<MuteRepository>();
+            _serviceProvider = serviceProvider;
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
+            _guildRepo = _serviceProvider.GetService<GuildRepository>();
+            _muteRepo = _serviceProvider.GetService<MuteRepository>();
 
             ObjectState StateObj = new ObjectState();
 

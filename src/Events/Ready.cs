@@ -1,20 +1,24 @@
 ﻿using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
 using System.Threading.Tasks;
+using System;
 
 namespace DEA.Events
 {
+    /// <summary>
+    /// An event that is run when DEA is ready to access the Discord API Client.
+    /// </summary>
     class Ready
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
 
-        public Ready(IDependencyMap map)
+        public Ready(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _client = _map.Get<DiscordSocketClient>();
+            _serviceProvider = serviceProvider;
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.Ready += HandleReady;
         }
 

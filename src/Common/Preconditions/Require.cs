@@ -6,6 +6,7 @@ using DEA.Services;
 using Discord;
 using Discord.Commands;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace DEA.Common.Preconditions
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireAttribute : PreconditionAttribute
     {
-        private IDependencyMap _map;
+        private IServiceProvider _serviceProvider;
         
         private Credentials _credentials;
         private UserRepository _userRepo;
@@ -33,14 +34,14 @@ namespace DEA.Common.Preconditions
             _attributes = attributes;
         }
         
-        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider serviceProvider)
         {
-            _map = map;
-            _credentials = _map.Get<Credentials>();
-            _userRepo = _map.Get<UserRepository>();
-            _moderationService = map.Get<ModerationService>();
-            _guildRepo = _map.Get<GuildRepository>();
-            _gangRepo = _map.Get<GangRepository>();
+            _serviceProvider = serviceProvider;
+            _credentials = _serviceProvider.GetService<Credentials>();
+            _userRepo = _serviceProvider.GetService<UserRepository>();
+            _moderationService = serviceProvider.GetService<ModerationService>();
+            _guildRepo = _serviceProvider.GetService<GuildRepository>();
+            _gangRepo = _serviceProvider.GetService<GangRepository>();
 
             var guildUser = context.User as IGuildUser;
             var DbUser = await _userRepo.GetUserAsync(guildUser);

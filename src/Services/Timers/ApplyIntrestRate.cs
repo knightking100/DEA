@@ -3,7 +3,7 @@ using DEA.Database.Models;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System;
 using System.Threading;
@@ -16,15 +16,15 @@ namespace DEA.Services.Timers
     /// </summary>
     class ApplyIntrestRate
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly GangRepository _gangRepo;
 
         private readonly Timer _timer;
 
-        public ApplyIntrestRate(IDependencyMap map)
+        public ApplyIntrestRate(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _gangRepo = _map.Get<GangRepository>();
+            _serviceProvider = serviceProvider;
+            _gangRepo = _serviceProvider.GetService<GangRepository>();
 
             ObjectState StateObj = new ObjectState();
 

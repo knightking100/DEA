@@ -66,7 +66,7 @@ namespace DEA.Modules
             {
                 var leaderDM = await leader.CreateDMChannelAsync();
 
-                var key = new Random().Next();
+                var key = Config.RAND.Next();
                 await leaderDM.SendAsync($"{Context.User} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
 
                 await ReplyAsync($"The leader of {gang.Name} has been informed of your request to join their gang.");
@@ -321,7 +321,7 @@ namespace DEA.Modules
 
             var stolen = resources * 2;
 
-            int roll = new Random().Next(1, 101);
+            int roll = Config.RAND.Next(1, 101);
             if (Config.RAID_SUCCESS_ODDS > roll)
             {
                 await _gangRepo.ModifyGangAsync(gangName, Context.Guild.Id, x => x.Wealth = raidedGang.Wealth - stolen);

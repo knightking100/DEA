@@ -3,7 +3,7 @@ using DEA.Database.Models;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System;
 using System.Threading;
@@ -16,15 +16,15 @@ namespace DEA.Services.Timers
     /// </summary>
     class ResetTempMultiplier
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly UserRepository _userRepo;
 
         private readonly Timer _timer;
 
-        public ResetTempMultiplier(IDependencyMap map)
+        public ResetTempMultiplier(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _userRepo = _map.Get<UserRepository>();
+            _serviceProvider = serviceProvider;
+            _userRepo = _serviceProvider.GetService<UserRepository>();
 
             ObjectState StateObj = new ObjectState();
 

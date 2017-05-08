@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
+    /// <summary>
+    /// Handles all errors.
+    /// </summary>
     class ErrorHandler
     {
         private readonly CommandService _commandService;

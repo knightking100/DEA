@@ -2,9 +2,11 @@
 {
     public partial class Blacklist : Model
     {
-        public Blacklist(ulong userId)
+        public Blacklist(ulong userId, string username, string avatarUrl)
         {
             UserId = userId;
+            Username = username;
+            AvatarUrl = avatarUrl;
         }
 
         public ulong UserId { get; set; }

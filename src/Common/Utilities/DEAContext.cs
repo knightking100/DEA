@@ -3,6 +3,8 @@ using DEA.Database.Repositories;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 
 namespace DEA.Common
@@ -19,17 +21,17 @@ namespace DEA.Common
         public string Prefix { get; private set; }
         public decimal Cash { get; set; }
 
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
 
-        public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IDependencyMap map) : base(client, msg)
+        public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IServiceProvider serviceProvider) : base(client, msg)
         {
-            _map = map;
-            _userRepo = _map.Get<UserRepository>();
-            _guildRepo = _map.Get<GuildRepository>();
-            _gangRepo = _map.Get<GangRepository>();
+            _serviceProvider = serviceProvider;
+            _userRepo = _serviceProvider.GetService<UserRepository>();
+            _guildRepo = _serviceProvider.GetService<GuildRepository>();
+            _gangRepo = _serviceProvider.GetService<GangRepository>();
             GUser = User as IGuildUser;
         }
 

@@ -19,13 +19,17 @@ The syntax of the command usage is:
 - [Polls](#polls)
 - [System](#system)
 
-These commands may only be used by the bot owners.
-
 ### BotOwners
+
+These commands may only be used by the bot owners provided by the Owner Ids in the Credentials.json file.
 
 Command | Description | Usage
 ----------------|--------------|-------
 SetGame|Sets the game of DEA.|`$SetGame <Game name>`
+LeaveGuild|Leaves any guild by guild ID.|`$LeaveGuild <Guild Id>`
+InformOwners|Sends a message to all server owners.|`$InformOwners <Message>`
+SendGlobalUpdate|Sends a global update message into all DEA Update channels.|`$SendGlobalUpdate <Message>`
+Blacklist|Blacklist a user from DEA entirely to the fullest extent.|`$Blacklist <User Id>`
 
 ### Owners
 
@@ -59,7 +63,6 @@ AddRank|Adds a rank roles for the DEA cash system.|`$AddRank <@RankRole> <CashRe
 RemoveRank|Removes a rank role for the DEA cash system.|`$RemoveRank <@RankRole>`
 ModifyRank|Modifies a rank role for the DEA cash system.|`$ModifyRank <@RankRole> <CashRequired>`
 SetModLog|Sets the moderation log.|`$SetModLog <#ModLog>`
-SetDetailedLog|Sets the detailed logs channel.|`$SetDetailedLogs <#DetailedLogs>`
 SetGambleChannel|Sets the gambling channel.|`$SetGambleChannel <#GambleChannel>`
 
 ### Moderation 
@@ -94,7 +97,7 @@ Cooldowns|View all your command cooldowns|`$Cooldowns`
 Command | Description | Usage
 ----------------|--------------|-------
 21+|Roll 20.84 or higher on a 100 sided die, win 0.2X your bet.|`$21+ <Bet>`
-50x2|Roll 50.00 or higher on a 100 sided die, win your bet.|`$50x2 <Bet>`
+50x2|Roll 50.01 or higher on a 100 sided die, win your bet.|`$50x2 <Bet>`
 53x2|Roll 52.50 or higher on a 100 sided die, win your bet.|`$53x2 <Bet>`
 75+|Roll 75.01 or higher on a 100 sided die, win 2.8X your bet.|`$75+ <Bet>`
 100x90|Roll 100.00 on a 100.00 sided die, win 9500X your bet.|`$100x9500 <Bet>`
@@ -103,14 +106,13 @@ Command | Description | Usage
 Command | Description | Usage
 ----------------|--------------|-------
 CreateGang|Allows you to create a gang at a hefty price.|`$CreateGang <Name>`
-AddGangMember|Allows you to add a member to your gang.|`$AddGangMember <@User>`
+JoinGang|Sends a request to the gang leader to join their gang.|`$JoinGang <Gang name>`
 Gang|Gives you all the info about any gang.|`$Gang [Gang name]`
 Ganglb|Shows the wealthiest gangs.|`$Ganglb`
 LeaveGang|Allows you to break all ties with a gang.|`$LeaveGang`
 KickGangMember|Kicks a user from your gang.|`$KickGangMember <@Member>`
 DestroyGang|Destroys a gang entirely taking down all funds with it.|`$DestroyGang`
 ChangeGangName|Changes the name of your gang.|`$ChangeGangName <New name>`
-TransferLeadership|Transfers the leadership of your gang to another member.|`$TransferLeadership <@Member>`
 Deposit|Deposit cash into your gang's funds.|`$Deposit <Cash>`
 Withdraw|Withdraw cash from your gang's funds.|`$Withdraw <Cash>`
 Raid|Raid another gang in attempt to steal some of their wealth.| `$Raid <Gang name> <Resources>`
@@ -125,9 +127,6 @@ Bully|Bully anyone's nickname to whatever you please.|`$Bully`
 Rob|Slam anyone's bank account.|`$Rob <Resources>`
 
 ### Trivia
-
-Example of the addition of a question: `$AddQuestion "How tall is Mount Everest?" "Tall enough"`.
-
 Command | Description | Usage
 ----------------|--------------|-------
 ChangeAutoTriviaSettings|Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minites.|`$ChangeAutoTriviaSettings`
@@ -148,9 +147,6 @@ Ass|Sauce me some booty how about that.|`$Ass`
 Hentai|The real shit goes down with custom hentai tags.|`$Hentai [tag]`
 
 ### Polls
-
-Example of the creation of a poll: `$CreatePoll "Are you white?" "HELL YEA~No~Maybe" 1 False False`
-
 Command | Description | Usage
 ----------------|--------------|-------
 CreatePoll|Creates a poll.|`$CreatePoll <poll> <choices> [daysToLast] [elderOnly] [modOnly]`

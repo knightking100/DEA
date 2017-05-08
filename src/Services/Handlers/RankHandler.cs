@@ -1,7 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
-using DEA.Services.Static;
 using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -11,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
+    /// <summary>
+    /// Handles all things related to DEA ranks.
+    /// </summary>
     public class RankHandler
     {
         private readonly GuildRepository _guildRepo;
@@ -22,7 +24,6 @@ namespace DEA.Services.Handlers
 
         public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
         {
-            Logger.Log(LogSeverity.Debug, $"Guild: {guild}, User: {user}", "Rank Handling");
             if (dbGuild.RankRoles.ElementCount != 0)
             {
                 var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
@@ -38,7 +39,6 @@ namespace DEA.Services.Handlers
 
                 var highestRolePosition = currentUser.Roles.OrderByDescending(x => x.Position).First().Position;
 
-                //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in dbGuild.RankRoles)
                 {
                     var cashRequired = (decimal)rankRole.Value.AsDouble;

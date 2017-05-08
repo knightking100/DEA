@@ -53,7 +53,7 @@ namespace DEA.Modules
         [Require(Attributes.Moderator)]
         public async Task RemovePoll(int index)
         {
-            var poll = await _pollRepo.GetePollAsync(index, Context.Guild.Id);
+            var poll = await _pollRepo.GetPollAsync(index, Context.Guild.Id);
             await _pollRepo.RemovePollAsync(index, Context.Guild.Id);
 
             await ReplyAsync($"You have successfully removed the \"{poll.Name}\" poll!");
@@ -111,7 +111,7 @@ namespace DEA.Modules
         [Summary("View the information of any poll.")]
         public async Task PollInfo(int index)
         {
-            var poll = await _pollRepo.GetePollAsync(index, Context.Guild.Id);
+            var poll = await _pollRepo.GetPollAsync(index, Context.Guild.Id);
             string description = string.Empty;
 
             var votes = poll.Votes();
@@ -157,7 +157,7 @@ namespace DEA.Modules
         [Summary("Vote on any poll.")]
         public async Task Vote(int pollIndex, int choiceIndex)
         {
-            var poll = await _pollRepo.GetePollAsync(pollIndex, Context.Guild.Id);
+            var poll = await _pollRepo.GetPollAsync(pollIndex, Context.Guild.Id);
 
             if (poll.VotesDocument.Any(x => x.Name == Context.User.Id.ToString()))
             {

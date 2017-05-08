@@ -115,7 +115,7 @@ namespace DEA.Modules
             }
 
             await userToMute.AddRoleAsync(mutedRole);
-            await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromDays(365));
+            await _muteRepo.InsertMuteAsync(userToMute, TimeSpan.FromDays(365));
 
             await SendAsync($"{Context.User.Boldify()} has successfully muted {userToMute.Boldify()}.");
 
@@ -152,7 +152,7 @@ namespace DEA.Modules
             }
 
             await userToMute.AddRoleAsync(mutedRole);
-            await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromHours(hours));
+            await _muteRepo.InsertMuteAsync(userToMute, TimeSpan.FromHours(hours));
 
             await SendAsync($"{Context.User.Boldify()} has successfully muted {userToMute.Boldify()} for {hours} {time}.");
 

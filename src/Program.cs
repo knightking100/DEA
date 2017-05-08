@@ -1,5 +1,5 @@
-﻿using DEA.Common.Utilities;
 using DEA.Common.Data;
+using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using DEA.Events;
@@ -11,6 +11,7 @@ using Discord;
 using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
@@ -107,8 +108,7 @@ namespace DEA
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
-            var map = new DependencyMap();
-            ConfigureServices(map);
+            var serviceProvider = ConfigureServices();
             Logger.Log(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
 
             Logger.Log(LogSeverity.Info, "MongoDb Connection Verification", "Test connection has commenced...");
@@ -117,40 +117,52 @@ namespace DEA
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Test connection has succeeded", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
-            InitializeTimersAndEvents(map);
-            await new CommandHandler(_commandService, map).InitializeAsync();
+            InitializeTimersAndEvents(serviceProvider);
+            await new CommandHandler(_commandService, serviceProvider).InitializeAsync();
             Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 
             await Task.Delay(-1);
         }
 
-        private void ConfigureServices(IDependencyMap map)
+        private IServiceProvider ConfigureServices()
         {
-            map.Add(_client);
-            map.Add(_credentials);
-            map.Add(_items);
-            map.Add(new PollRepository(_polls));
-            map.Add(new GuildRepository(_guilds));
-            map.Add(new BlacklistRepository(_blacklists));
-            map.Add(new RankHandler(map.Get<GuildRepository>()));
-            map.Add(new UserRepository(_users, map.Get<RankHandler>()));
-            map.Add(new InteractiveService(_client));
-            map.Add(new GameService(map.Get<InteractiveService>(), map.Get<UserRepository>()));
-            map.Add(new ModerationService(map.Get<GuildRepository>()));
-            map.Add(new ErrorHandler(_commandService));
-            map.Add(new GangRepository(_gangs));
-            map.Add(new MuteRepository(_mutes));
+            var services = new ServiceCollection()
+                .AddSingleton(_client)
+                .AddSingleton(_commandService)
+                .AddSingleton(_credentials)
+                .AddSingleton(_users)
+                .AddSingleton(_guilds)
+                .AddSingleton(_gangs)
+                .AddSingleton(_mutes)
+                .AddSingleton(_blacklists)
+                .AddSingleton(_polls)
+                .AddSingleton<PollRepository>()
+                .AddSingleton<GuildRepository>()
+                .AddSingleton<BlacklistRepository>()
+                .AddSingleton<RankHandler>()
+                .AddSingleton<UserRepository>()
+                .AddSingleton<InteractiveService>()
+                .AddSingleton<GameService>()
+                .AddSingleton<ModerationService>()
+                .AddSingleton<ErrorHandler>()
+                .AddSingleton<GangRepository>()
+                .AddSingleton<MuteRepository>()
+                .AddSingleton<Statistics>();
+
+            return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }
 
-        private void InitializeTimersAndEvents(IDependencyMap map)
+        private void InitializeTimersAndEvents(IServiceProvider serviceProvider)
         {
-            new Ready(map);
-            new UserJoined(map);
-            new ApplyIntrestRate(map);
-            new AutoDeletePolls(map);
-            new AutoTrivia(map);
-            new AutoUnmute(map);
-            new ResetTempMultiplier(map);
+            new Ready(serviceProvider);
+            new JoinedGuild(serviceProvider);
+            new GuildUpdated(serviceProvider);
+            new UserJoined(serviceProvider);
+            new ApplyIntrestRate(serviceProvider);
+            new AutoDeletePolls(serviceProvider);
+            new AutoTrivia(serviceProvider);
+            new AutoUnmute(serviceProvider);
+            new ResetTempMultiplier(serviceProvider);
         }
 
     }

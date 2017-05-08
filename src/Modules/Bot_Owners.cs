@@ -35,7 +35,6 @@ namespace DEA.Modules
         public async Task LeaveGuild(ulong guildId)
         {
             var guild = await (Context.Client as IDiscordClient).GetGuildAsync(guildId);
-            
             if (guild != null)
             {
                 await guild.LeaveAsync();
@@ -47,26 +46,44 @@ namespace DEA.Modules
             }
         }
 
+        [Command("InformOwners")]
+        [Summary("Sends a message to all server owners.")]
+        public async Task InformOwners([Remainder] string message)
+        {
+            await ReplyAsync("The inform owners process has started...");
+            foreach (var guild in Context.Client.Guilds)
+            {
+                try
+                {
+                    var channel = await guild.Owner.CreateDMChannelAsync();
+
+                    await channel.SendAsync(message);
+                }
+                catch { }
+
+                await Task.Delay(1000);
+            }
+            await ReplyAsync("All owners have been informed.");
+        }
+
         [Command("SendGlobalUpdate")]
         [Summary("Sends a global update message into all DEA Update channels.")]
         public async Task SendGlobalUpdate([Remainder] string updateMessage)
         {
             await ReplyAsync("The global update message process has started...");
-            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
-            {
-                var dbGuild = await _guildRepo.GetGuildAsync(guild.Id);
-                if (dbGuild.UpdateChannelId > 0)
-                {
-                    var channel = await guild.GetChannelAsync(dbGuild.UpdateChannelId);
+            var dbGuilds = await _guildRepo.AllAsync();
 
-                    if (channel != null)
+            foreach (var guild in Context.Client.Guilds)
+            {
+                if (dbGuilds.Exists(x => x.GuildId == guild.Id))
+                {
+                    var dbGuild = dbGuilds.Find(x => x.GuildId == guild.Id);
+                    try
                     {
-                        try
-                        {
-                            await (channel as ITextChannel).SendAsync(updateMessage);
-                        }
-                        catch { }
+                        var channel = guild.GetChannel(dbGuild.UpdateChannelId);
+                        await (channel as ITextChannel).SendAsync(updateMessage);
                     }
+                    catch { }
                 }
             }
             await ReplyAsync("All global update messages have been sent.");
@@ -76,7 +93,19 @@ namespace DEA.Modules
         [Summary("Blacklist a user from DEA entirely to the fullest extent.")]
         public async Task Blacklist(ulong userId)
         {
-            var blacklist = new Blacklist(userId);
+            var username = string.Empty;
+            var avatarUrl = string.Empty;
+
+            try
+            {
+                var user = await (Context.Client as IDiscordClient).GetUserAsync(userId);
+
+                username = user.Username;
+                avatarUrl = user.GetAvatarUrl();
+            }
+            catch { }
+
+            var blacklist = new Blacklist(userId, username, avatarUrl);
             await _blacklistRepo.InsertAsync(blacklist);
 
             foreach (var guild in Context.Client.Guilds)

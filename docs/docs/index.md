@@ -12,7 +12,7 @@ Contrary to nearly all public bots, almost everything is customizable. You may s
 
 If you have any issues when setting up the bot, do not hesitate to join the official DEA support channel by clicking on the link below:
 
-[![dea][dea]](https://discord.gg/Tuptja9)
+[![dea][dea]](https://discord.gg/gvyma7H)
 
 [img]: https://cdn.discordapp.com/attachments/202743183774318593/210580315381563392/discord.png
 [dea]: http://i.imgur.com/ejsCJwI.jpg

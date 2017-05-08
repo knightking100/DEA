@@ -2,7 +2,7 @@
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
 using System;
 using System.Threading;
@@ -15,7 +15,7 @@ namespace DEA.Services.Timers
     /// </summary>
     class AutoTrivia
     { 
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly GuildRepository _guildRepo;
         private readonly DiscordSocketClient _client;
         private readonly UserRepository _userRepo;
@@ -24,14 +24,14 @@ namespace DEA.Services.Timers
 
         private readonly Timer _timer;
 
-        public AutoTrivia(IDependencyMap map)
+        public AutoTrivia(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _guildRepo = _map.Get<GuildRepository>();
-            _userRepo = map.Get<UserRepository>();
-            _client = map.Get<DiscordSocketClient>();
-            _gameService = map.Get<GameService>();
-            _interactiveService = map.Get<InteractiveService>();
+            _serviceProvider = serviceProvider;
+            _guildRepo = _serviceProvider.GetService<GuildRepository>();
+            _userRepo = serviceProvider.GetService<UserRepository>();
+            _client = serviceProvider.GetService<DiscordSocketClient>();
+            _gameService = serviceProvider.GetService<GameService>();
+            _interactiveService = serviceProvider.GetService<InteractiveService>();
 
             ObjectState StateObj = new ObjectState();
 

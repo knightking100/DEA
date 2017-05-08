@@ -8,6 +8,11 @@ namespace DEA.Database.Repositories
     {
         public GuildRepository(IMongoCollection<Guild> guilds) : base(guilds) { }
 
+        /// <summary>
+        /// Gets a guild by Guild Id.
+        /// </summary>
+        /// <param name="guildId">The Guild Id.</param>
+        /// <returns>A task returning a guild.</returns>
         public async Task<Guild> GetGuildAsync(ulong guildId)
         {
             var dbGuild = await GetAsync(x => x.GuildId == guildId);

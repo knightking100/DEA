@@ -1,10 +1,10 @@
 # DEA
-[![Build status](https://ci.appveyor.com/api/projects/status/5sb7n8a09w9clute/branch/dev?svg=true)](https://github.com/RealBlazeIt/DEA)
-[![Discord](https://discordapp.com/api/guilds/290759415362224139/widget.png)](https://discord.gg/Tuptja9)
+[![Build status](https://ci.appveyor.com/api/projects/status/5sb7n8a09w9clute/branch/dev?svg=true)](https://discord.gg/gvyma7H)
+[![Discord](https://discordapp.com/api/guilds/290759415362224139/widget.png)](https://discord.gg/gvyma7H)
 
 DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
 
-[Official Support Server](https://discord.gg/Tuptja9)
+[Official Support Server](https://discord.gg/gvyma7H)
 
 [Add DEA to your Server](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=477195286)
 

@@ -12,7 +12,13 @@ namespace DEA.Database.Repositories
     {
         public PollRepository(IMongoCollection<Poll> polls) : base(polls) { }
 
-        public async Task<Poll> GetePollAsync(int index, ulong guildId)
+        /// <summary>
+        /// Gets a poll by index.
+        /// </summary>
+        /// <param name="index">Index of the poll.</param>
+        /// <param name="guildId">Guild Id of where the poll was created.</param>
+        /// <returns></returns>
+        public async Task<Poll> GetPollAsync(int index, ulong guildId)
         {
             var polls = await AllAsync(y => y.GuildId == guildId);
 
@@ -28,6 +34,17 @@ namespace DEA.Database.Repositories
             }
         }
 
+        /// <summary>
+        /// Creates a poll.
+        /// </summary>
+        /// <param name="context">Context of the command use.</param>
+        /// <param name="name">Name of the poll.</param>
+        /// <param name="choices">Choices in the poll.</param>
+        /// <param name="length">Length of the poll before deletion.</param>
+        /// <param name="elderOnly">Whether the poll can only be voted on by elder users.</param>
+        /// <param name="modOnly">Whether the poll can only be voted on moderators.</param>
+        /// <param name="createdByMod">Whether the poll was created by a moderator.</param>
+        /// <returns>A task returning a poll.</returns>
         public async Task<Poll> CreatePollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
         {
             if (await ExistsAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
@@ -59,6 +76,11 @@ namespace DEA.Database.Repositories
             return createdPoll;
         }
 
+        /// <summary>
+        /// Removes a poll by index.
+        /// </summary>
+        /// <param name="index">Index of the poll.</param>
+        /// <param name="guildId">Guild Id of where the poll was created.</param>
         public async Task RemovePollAsync(int index, ulong guildId)
         {
             var polls = (await AllAsync(y => y.GuildId == guildId)).OrderBy(y => y.CreatedAt).ToList();

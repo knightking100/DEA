@@ -2,24 +2,28 @@
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class UpdatedGuild
+    /// <summary>
+    /// An event that is run every time a guild gets updated.
+    /// </summary>
+    class GuildUpdated
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly BlacklistRepository _blaclistRepo;
 
-        public UpdatedGuild(IDependencyMap map)
+        public GuildUpdated(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _client = _map.Get<DiscordSocketClient>();
-            _blaclistRepo = _map.Get<BlacklistRepository>();
+            _serviceProvider = serviceProvider;
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
+            _blaclistRepo = _serviceProvider.GetService<BlacklistRepository>();
             _client.GuildUpdated += HandleGuildUpdated;
         }
 
@@ -41,7 +45,7 @@ namespace DEA.Events
                 }
                 else if (isBlacklistedGuild && !isBlacklistedOwner)
                 {
-                    await _blaclistRepo.InsertAsync(new Blacklist(guildAfter.OwnerId));
+                    await _blaclistRepo.InsertAsync(new Blacklist(guildAfter.OwnerId, guildAfter.Owner.Username, guildAfter.Owner.GetAvatarUrl()));
                     await guildAfter.LeaveAsync();
                 }
                 else if (isBlacklistedOwner && isBlacklistedGuild)

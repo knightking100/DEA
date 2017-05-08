@@ -138,8 +138,8 @@
 <li><a href="#polls">Polls</a></li>
 <li><a href="#system">System</a></li>
 </ul>
-<p>These commands may only be used by the bot owners.</p>
 <h3 id="botowners">BotOwners</h3>
+<p>These commands may only be used by the bot owners provided by the Owner Ids in the Credentials.json file.</p>
 <table>
 <thead>
 <tr>
@@ -153,6 +153,26 @@
 <td>SetGame</td>
 <td>Sets the game of DEA.</td>
 <td><code>$SetGame &lt;Game name&gt;</code></td>
+</tr>
+<tr>
+<td>LeaveGuild</td>
+<td>Leaves any guild by guild ID.</td>
+<td><code>$LeaveGuild &lt;Guild Id&gt;</code></td>
+</tr>
+<tr>
+<td>InformOwners</td>
+<td>Sends a message to all server owners.</td>
+<td><code>$InformOwners &lt;Message&gt;</code></td>
+</tr>
+<tr>
+<td>SendGlobalUpdate</td>
+<td>Sends a global update message into all DEA Update channels.</td>
+<td><code>$SendGlobalUpdate &lt;Message&gt;</code></td>
+</tr>
+<tr>
+<td>Blacklist</td>
+<td>Blacklist a user from DEA entirely to the fullest extent.</td>
+<td><code>$Blacklist &lt;User Id&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -274,11 +294,6 @@
 <td>SetModLog</td>
 <td>Sets the moderation log.</td>
 <td><code>$SetModLog &lt;#ModLog&gt;</code></td>
-</tr>
-<tr>
-<td>SetDetailedLog</td>
-<td>Sets the detailed logs channel.</td>
-<td><code>$SetDetailedLogs &lt;#DetailedLogs&gt;</code></td>
 </tr>
 <tr>
 <td>SetGambleChannel</td>
@@ -414,7 +429,7 @@
 </tr>
 <tr>
 <td>50x2</td>
-<td>Roll 50.00 or higher on a 100 sided die, win your bet.</td>
+<td>Roll 50.01 or higher on a 100 sided die, win your bet.</td>
 <td><code>$50x2 &lt;Bet&gt;</code></td>
 </tr>
 <tr>
@@ -450,9 +465,9 @@
 <td><code>$CreateGang &lt;Name&gt;</code></td>
 </tr>
 <tr>
-<td>AddGangMember</td>
-<td>Allows you to add a member to your gang.</td>
-<td><code>$AddGangMember &lt;@User&gt;</code></td>
+<td>JoinGang</td>
+<td>Sends a request to the gang leader to join their gang.</td>
+<td><code>$JoinGang &lt;Gang name&gt;</code></td>
 </tr>
 <tr>
 <td>Gang</td>
@@ -483,11 +498,6 @@
 <td>ChangeGangName</td>
 <td>Changes the name of your gang.</td>
 <td><code>$ChangeGangName &lt;New name&gt;</code></td>
-</tr>
-<tr>
-<td>TransferLeadership</td>
-<td>Transfers the leadership of your gang to another member.</td>
-<td><code>$TransferLeadership &lt;@Member&gt;</code></td>
 </tr>
 <tr>
 <td>Deposit</td>
@@ -544,7 +554,6 @@
 </tbody>
 </table>
 <h3 id="trivia">Trivia</h3>
-<p>Example of the addition of a question: <code>$AddQuestion "How tall is Mount Everest?" "Tall enough"</code>.</p>
 <table>
 <thead>
 <tr>
@@ -629,7 +638,6 @@
 </tbody>
 </table>
 <h3 id="polls">Polls</h3>
-<p>Example of the creation of a poll: <code>$CreatePoll "Are you white?" "HELL YEA~No~Maybe" 1 False False</code></p>
 <table>
 <thead>
 <tr>
