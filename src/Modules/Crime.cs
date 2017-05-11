@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DEA.Database.Repositories;
 using DEA.Common;
@@ -86,7 +87,7 @@ namespace DEA.Modules
             {
                 await _userRepo.EditCashAsync(Context, -Config.STEAL_FINE);
                 await ReplyAsync($"You were on your way out with the cash, but then some hot chick asked you if you " +
-                            $"wanted to bust a nut. Turns out she was cop, and raped you before turning you in. Since she passed on some " +
+                            $"wanted to bust a nut. Turns out she was a cop, and raped you before turning you in. Since she passed on some " +
                             $"nice words to the judge about you not resisting arrest, you managed to walk away with only a " +
                             $"{Config.STEAL_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
             }
