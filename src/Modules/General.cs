@@ -176,7 +176,7 @@ namespace DEA.Modules
         }
         [Command("Inventory")]
         [Alias("Inv")]
-        [Summary("Check the inventory of any user.")]
+        [Summary("View the inventory of any user.")]
         public async Task Inventory([Remainder]IGuildUser user = null)
         {
             user = user ?? Context.GUser;
