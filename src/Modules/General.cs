@@ -295,7 +295,7 @@ namespace DEA.Modules
             await SendAsync(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
         [Command("Inventory")]
-        [Summary("Check the inventory of any user.")
+        [Summary("Check the inventory of any user.")]
         public async Task Inventory([Remainder]IGuildUser user)
         {
             user = user ?? Context.GUser;
