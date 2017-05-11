@@ -9,8 +9,8 @@ namespace DEA.Common.Data
         public const string DEFAULT_PREFIX = "$";
 
         public const int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, RATELB_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80,
-        MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24, GANGSLB_CAP = 10, DEA_CUT = 10, RAID_SUCCESS_ODDS = 60, ROB_SUCCESS_ODDS = 60,
-        MAX_POLL_SIZE = 100, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150;
+            MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24, GANGSLB_CAP = 10, DEA_CUT = 10, RAID_SUCCESS_ODDS = 60, ROB_SUCCESS_ODDS = 60,
+            MAX_POLL_SIZE = 100, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150, CASH_PER_MSG = 5, MSG_COOLDOWN = 30;
 
         public const decimal LINE_COST = 250, POUND_COST = 1000, KILO_COST = 2500, POUND_MULTIPLIER = 2, KILO_MULTIPLIER = 4,
             RESET_REWARD = 10000, MAX_WHORE = 100, MIN_WHORE = 50, WHORE_FINE = 200, MAX_JUMP = 250, JUMP_FINE = 500, MIN_JUMP = 100,
@@ -23,9 +23,12 @@ namespace DEA.Common.Data
 
         public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$"), ANWITHQUESTIONMARK = new Regex(@"^[a-zA-Z0-9\s\?]*$");
 
-        private static readonly Color[] COLORS = { new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),
-        new Color(242, 38, 255), new Color(255, 28, 142), new Color(104, 255, 34), new Color(255, 190, 17), new Color(41, 84, 255),
-        new Color(150, 36, 237), new Color(168, 237, 0)};
+        private static readonly Color[] COLORS = 
+        {
+            new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),
+            new Color(242, 38, 255), new Color(255, 28, 142), new Color(104, 255, 34), new Color(255, 190, 17), new Color(41, 84, 255),
+            new Color(150, 36, 237), new Color(168, 237, 0)
+        };
 
         public static Color Color() { return COLORS[RAND.Next(1, COLORS.Length) - 1]; }
 
@@ -40,7 +43,7 @@ namespace DEA.Common.Data
             TimeSpan.FromMinutes(5), AUTO_TRIVIA_COOLDOWN = TimeSpan.FromMinutes(2), AUTO_DELETE_POLLS_COOLDOWN = TimeSpan.FromMinutes(1);
 
         public static readonly string[] BANKS = { "Bank of America", "Wells Fargo Bank", "JPMorgan Chase Bank", "Capital One Bank",
-        "RBC Bank", "USAA Bank", "Union Bank", "Morgan Stanley Bank" }, STORES = { "7-Eleven", "Speedway", "Couche-Tard", "QuikTrip",
-        "Kroger", "Circle K" };
+            "RBC Bank", "USAA Bank", "Union Bank", "Morgan Stanley Bank" }, STORES = { "7-Eleven", "Speedway", "Couche-Tard", "QuikTrip",
+            "Kroger", "Circle K" };
     }
 }

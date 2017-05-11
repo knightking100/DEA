@@ -9,6 +9,7 @@ using DEA.Common.Preconditions;
 using DEA.Services;
 using DEA.Common.Extensions;
 using DEA.Common.Data;
+using DEA.Common.Utilities;
 
 namespace DEA.Modules
 {
@@ -18,9 +19,9 @@ namespace DEA.Modules
         private readonly UserRepository _userRepo;
         private readonly GangRepository _gangRepo;
         private readonly ModerationService _moderationService;
-
         private readonly Item[] _items;
-        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService, Item[] _items)
+
+        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService, Item[] items)
         {
             _userRepo = userRepo;
             _gangRepo = gangRepo;
@@ -180,31 +181,46 @@ namespace DEA.Modules
         [Summary("List of available shop items.")]
         public async Task Shop([Summary("Bullets")][Remainder]string item = null)
         {
+            item = item?.ToLower();
+
             if (string.IsNullOrWhiteSpace(item))
             {
                 string description = string.Empty;
-                foreach (var kv in _items)
+                foreach (var _item in _items.OrderBy(x => x.Price))
                 {
-                    description += $"**Cost: {kv.Price}$** | Command: `{Config.Prefix}shop {kv.Name} | Description: {kv.Description}\n";
+                    if (_item.IsGun)
+                    {
+                        description += $"**Cost: {_item.Price.USD()}** | Command: `{Context.Prefix}shop {_item.Name}` | Damage: {_item.Damage} | Accuracy: {_item.Accuracy} | Description: {_item.Description}\n";
+                    }
+                    else
+                    {
+                        description += $"**Cost: {_item.Price.USD()}** | Command: `{Context.Prefix}shop {_item.Name}` | Description: {_item.Description}\n";
+                    }
                 }
+
                 await SendAsync(description, "Available Shop Items");
             }
-            else if (_items.Any(x => x.Name == item))
+            else if (_items.Any(x => x.Name.ToLower() == item))
             {
-                var element = _items.First(x => x.Name == item);
+                var element = _items.First(x => x.Name.ToLower() == item);
                 if (element.Price > Context.Cash)
                 {
                     ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                 }
-                if (Context.DbUser.Inventory.Contains(element.Name))
+                else if (Context.DbUser.Inventory.Contains(element.Name))
                 {
-                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory[element.Name] += 1);
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory[element.Name] = 1 + x.Inventory[element.Name].AsInt32);
                 }
                 else
                 {
                     await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add(element.Name, 1));
                 }
+
                 await ReplyAsync($"Successfully purchased {element.Name}!");
+            }
+            else
+            {
+                ReplyError("This item does not exist.");
             }
         }        
     }

@@ -11,6 +11,7 @@ using DEA.Services.Handlers;
 using DEA.Common;
 using DEA.Common.Data;
 using DEA.Common.Extensions;
+using DEA.Common.Utilities;
 
 namespace DEA.Modules
 {
@@ -20,8 +21,8 @@ namespace DEA.Modules
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
         private readonly RankHandler _rankHandler;
-
         private readonly Item[] _items;
+
         public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, Item[] items)
         {
             _userRepo = userRepo;
@@ -29,76 +30,6 @@ namespace DEA.Modules
             _gangRepo = gangRepo;
             _rankHandler = rankHandler;
             _items = items;
-        }
-
-        [Command("Investments")]
-        [Summary("Increase your money per message")]
-        public async Task Invest([Remainder] string investment = null)
-        {
-            switch (investment)
-            {
-                case "line":
-                    if (Config.LINE_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    else if (Context.DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
-                    {
-                        ReplyError($"You have already purchased this investment.");
-                    }
-
-                    await _userRepo.EditCashAsync(Context, -Config.LINE_COST);
-                    await _userRepo.ModifyAsync(Context.DbUser, x => x.MessageCooldown = Config.LINE_COOLDOWN.TotalMilliseconds);
-
-                    await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
-                    break;
-                case "pound":
-                case "lb":
-                    if (Config.POUND_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    else if (Context.DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
-                    {
-                        ReplyError("You already purchased this investment.");
-                    }
-
-                    await _userRepo.EditCashAsync(Context, -Config.POUND_COST);
-                    await _userRepo.ModifyAsync(Context.DbUser, x => x.InvestmentMultiplier = Config.POUND_MULTIPLIER);
-
-                    await ReplyAsync("***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
-                    break;
-                case "kg":
-                case "kilo":
-                case "kilogram":
-                    if (Config.KILO_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    else if (Context.DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
-                    {
-                        ReplyError("You already purchased this investment.");
-                    }
-                    else if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
-                    {
-                        ReplyError("You must purchase the pound of cocaine investment before buying this one.");
-                    }
-
-                    await _userRepo.EditCashAsync(Context, -Config.KILO_COST);
-                    await _userRepo.ModifyAsync(Context.DbUser, x => x.InvestmentMultiplier = Config.KILO_MULTIPLIER);
-
-                    await ReplyAsync("Only the black jews would actually enjoy 4$/msg.");
-                    break;
-                default:
-                    await SendAsync($"\n**Cost: {Config.LINE_COST}$** | Command: `{Context.Prefix}investments line` | Description: " +
-                        $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
-                        $"\n**Cost: {Config.POUND_COST}$** | Command: `{Context.Prefix}investments pound` | Description: " +
-                        $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
-                        $"`{Context.Prefix}investments kilo` | Description: A kilo of cocaine is more than enough to " +
-                        $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they will not stack with themselves.",
-                        "Available Investments:");
-                    break;
-            }
         }
 
         [Command("Leaderboards")]
@@ -136,43 +67,6 @@ namespace DEA.Modules
             }
 
             await SendAsync(description, "The Richest Traffickers");
-        }
-
-        [Command("Rates")]
-        [Alias("highestrate", "ratehighscore", "highestrates", "ratelb", "rateleaderboards")]
-        [Summary("View the richest Drug Traffickers.")]
-        public async Task Chatters()
-        {
-            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id);
-            var sorted = users.OrderByDescending(x => x.TemporaryMultiplier);
-            string description = string.Empty;
-            int position = 1;
-
-            if (users.Count == 0)
-            {
-                ReplyError("There is nobody on the leaderboards yet.");
-            }
-
-            var guildInterface = Context.Guild as IGuild;
-
-            foreach (User dbUser in sorted)
-            {
-                var user = await guildInterface.GetUserAsync(dbUser.UserId);
-                if (user == null)
-                {
-                    continue;
-                }
-
-                description += $"{position}. {user.Boldify()}: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
-                if (position >= Config.RATELB_CAP)
-                {
-                    break;
-                }
-
-                position++;
-            }
-
-            await SendAsync(description, "The Best Chatters");
         }
 
         [Command("Donate")]
@@ -221,20 +115,6 @@ namespace DEA.Modules
             }
 
             await SendAsync(description, $"Ranking of {user}");
-        }
-
-        [Command("Rate")]
-        [Summary("View the money/message rate of anyone.")]
-        public async Task Rate([Remainder] IGuildUser user = null)
-        {
-            user = user ?? Context.GUser;
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
-
-            await SendAsync($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).USD()}\n" +
-                       $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
-                       $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
-                       $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {user}");
         }
 
         [Command("Money")]
@@ -295,20 +175,37 @@ namespace DEA.Modules
             await SendAsync(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
         [Command("Inventory")]
-        [Summary("Check the inventory of any user.")
-        public async Task Inventory([Remainder]IGuildUser user)
+        [Alias("Inv")]
+        [Summary("Check the inventory of any user.")]
+        public async Task Inventory([Remainder]IGuildUser user = null)
         {
             user = user ?? Context.GUser;
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
+
             if (dbUser.Inventory.ElementCount == 0)
             {
-                ReplyError("You have nothing in your inventory.");
+                if (dbUser.UserId == Context.User.Id)
+                {
+                    ReplyError("You have nothing in your inventory.");
+                }
+                else
+                {
+                    ReplyError("This user has nothing in their inventory.");
+                }
+                
             }
             var description = string.Empty;
             
             foreach(var item in dbUser.Inventory.Elements)
             {
-                description += $"**{item.Name}** : {item.Value}.";
+                if (item.Value.AsInt32 == 1)
+                {
+                    description += $"1 {item.Name}.";
+                }
+                else
+                {
+                    description += $"{item.Value} {item.Name}s.";
+                }
             }
             await SendAsync(description, $"Inventory of {user.Boldify()}");
         }

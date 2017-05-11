@@ -12,6 +12,7 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
@@ -50,7 +51,7 @@ namespace DEA
                 {
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
                 }
-                using (StreamReader file = File.OpenText(@"ItemList.json"))
+                using (StreamReader file = File.OpenText(@"Common/Data/ItemList.json"))
                 {
                     _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
                 }
@@ -84,6 +85,12 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
+
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Bounty", 0));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Inventory", new BsonDocument()));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("MessageCooldown"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("InvestmentMultiplier"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("TemporaryMultiplier"));
         }
 
         private async Task RunAsync()
@@ -162,8 +169,6 @@ namespace DEA
             new AutoDeletePolls(serviceProvider);
             new AutoTrivia(serviceProvider);
             new AutoUnmute(serviceProvider);
-            new ResetTempMultiplier(serviceProvider);
         }
-
     }
 }

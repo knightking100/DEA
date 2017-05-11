@@ -103,25 +103,5 @@ namespace DEA.Database.Repositories
             await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
         }
 
-        /// <summary>
-        /// Provides the user in question with money and an increased rate if the cooldown has finished.
-        /// </summary>
-        /// <param name="userRepo">The user repository object to modify the user's cash.</param>
-        /// <param name="context">The context to get the user's data information.</param>
-        /// <returns></returns>
-        public async Task ApplyCash(IGuildUser user, User dbUser, Guild dbGuild)
-        {
-            if (DateTime.UtcNow.Subtract(dbUser.Message).TotalMilliseconds > dbUser.MessageCooldown)
-            {
-                await ModifyAsync(dbUser, x =>
-                {
-                    x.TemporaryMultiplier = dbUser.TemporaryMultiplier + dbGuild.TempMultiplierIncreaseRate;
-                    x.Message = DateTime.UtcNow;
-                    x.Cash += dbGuild.GlobalChattingMultiplier * dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier;
-                });
-                await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
-            }
-        }
-
     }
 }

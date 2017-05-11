@@ -1,35 +1,38 @@
-{
-	"0": {
-			"Name" : "Revolver",
-			"Description" : "Pop a glock in a foe. Enough to increase chance by 5%.",
-			"Damage" : 5,
-			"Price" : 1000,
-			"IsGun" : true
-		},
-	"1": {
-			"Name" : "AR15",
-			"Description" : "Assault fire. Assault weapon. 15% assault increase.",
-			"Damage" : 15,
-			"Price" : 5000,
-			"IsGun" : true
-		},
-	"2": {
-			"Name" : "Dragunov",
-			"Description" : "360 noscope sniper shot, 20% increase.",
-			"Damage" : 20,
-			"Price" : 20000,
-			"IsGun" : true
-		},
-	"3": {
-			"Name" : "Kevlar",
-			"Description" : "Adds a piece of armor for protection. 20% less likely to be fatally shot.",
-			"Price" : 7500,
-			"IsArmor" : true
-		},
-	"4": {
-			"Name" : "Bullets",
-			"Description" : "You can't shoot a gun without bullets, or did you think?",
-			"Price" : 500
-		}
-}
+[
+	{
+		"Name" : "Revolver",
+		"Description" : "Pop a glock in a foe. Enough to increase chance by 5%.",
+		"Damage" : 10,
+		"Accuray" : 35,
+		"Price" : 1000,
+		"IsGun" : true
+	},
+	{
+		"Name" : "AR15",
+		"Description" : "Assault fire. Assault weapon. 15% assault increase.",
+		"Damage" : 25,
+		"Accuray" : 55,
+		"Price" : 5000,
+		"IsGun" : true
+	},
+	{
+		"Name" : "Dragunov",
+		"Description" : "360 noscope sniper shot, 20% increase.",
+		"Damage" : 50,
+		"Accuray" : 75,
+		"Price" : 20000,
+		"IsGun" : true
+	},
+	{
+		"Name" : "Kevlar",
+		"Description" : "Adds a piece of armor for protection. 20% less likely to be fatally shot.",
+		"Price" : 7500,
+		"IsArmor" : true
+	},
+	{
+		"Name" : "Bullets",
+		"Description" : "You can't shoot a gun without bullets, or did you think?",
+		"Price" : 500
+	}
+]
 			

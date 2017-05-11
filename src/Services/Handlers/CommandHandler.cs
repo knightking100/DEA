@@ -23,6 +23,7 @@ namespace DEA.Services.Handlers
         private readonly CommandService _commandService;
         private readonly Statistics _statistics;
         private readonly ErrorHandler _errorHandler;
+        private readonly RankHandler _rankHandler;
         private readonly UserRepository _userRepo;
 
         public CommandHandler(CommandService commandService, IServiceProvider serviceProvider)
@@ -31,6 +32,7 @@ namespace DEA.Services.Handlers
             _commandService = commandService;
             _statistics = _serviceProvider.GetService<Statistics>();
             _errorHandler = _serviceProvider.GetService<ErrorHandler>();
+            _rankHandler = _serviceProvider.GetService<RankHandler>();
             _userRepo = _serviceProvider.GetService<UserRepository>();
             _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
@@ -98,7 +100,15 @@ namespace DEA.Services.Handlers
                 }
                 else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 {
-                    await _userRepo.ApplyCash(context.GUser, context.DbUser, context.DbGuild);
+                    if (DateTime.UtcNow.Subtract(context.DbUser.Message).TotalMilliseconds > Config.MSG_COOLDOWN)
+                    {
+                        await _userRepo.ModifyAsync(context.DbUser, x =>
+                        {
+                            x.Message = DateTime.UtcNow;
+                            x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CASH_PER_MSG;
+                        });
+                        await _rankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
+                    }
                 }
             });
         }
